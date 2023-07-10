@@ -2,7 +2,8 @@ import express, {Express, Request, Response} from 'express';
 import {Pool} from 'pg';
 
 const app: Express = express();
-const port = 3000;
+const port = 3001;
+//const query = "query.sql";
 //Enabled CORS
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -29,7 +30,24 @@ app.get('/awesome/applicant', async (req: Request, res: Response)=>{
     // };
     try {
         const client = await pool.connect();
-        const result = await client.query('SELECT * FROM Vivacity');
+        //const result = await client.query('SELECT * FROM Vivacity');
+        const query = `
+      SELECT "credentials", "details"
+      FROM vivacity
+      WHERE "credentials" IN ('Name', 'Age', 'University', 'Expertise', 'Course', 'Talents', 'Fun Fact', 'Hobbies')
+      ORDER BY CASE "credentials"
+        WHEN 'Name' THEN 1
+        WHEN 'Age' THEN 2
+        WHEN 'University' THEN 3
+        WHEN 'Expertise' THEN 4
+        WHEN 'Course' THEN 5
+        WHEN 'Talents' THEN 6
+        WHEN 'Fun Fact' THEN 7
+        WHEN 'Hobbies' THEN 8
+        ELSE 9
+      END;
+    `;
+    const result = await client.query(query);
         client.release();
     
         const applicant = result.rows;

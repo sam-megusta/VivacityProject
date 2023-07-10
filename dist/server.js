@@ -16,6 +16,7 @@ const express_1 = __importDefault(require("express"));
 const pg_1 = require("pg");
 const app = (0, express_1.default)();
 const port = 3001;
+//const query = "query.sql";
 //Enabled CORS
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -39,7 +40,24 @@ app.get('/awesome/applicant', (req, res) => __awaiter(void 0, void 0, void 0, fu
     // };
     try {
         const client = yield pool.connect();
-        const result = yield client.query('SELECT * FROM Vivacity');
+        //const result = await client.query('SELECT * FROM Vivacity');
+        const query = `
+      SELECT "credentials", "details"
+      FROM vivacity
+      WHERE "credentials" IN ('Name', 'Age', 'University', 'Expertise', 'Course', 'Talents', 'Fun Fact', 'Hobbies')
+      ORDER BY CASE "credentials"
+        WHEN 'Name' THEN 1
+        WHEN 'Age' THEN 2
+        WHEN 'University' THEN 3
+        WHEN 'Expertise' THEN 4
+        WHEN 'Course' THEN 5
+        WHEN 'Talents' THEN 6
+        WHEN 'Fun Fact' THEN 7
+        WHEN 'Hobbies' THEN 8
+        ELSE 9
+      END;
+    `;
+        const result = yield client.query(query);
         client.release();
         const applicant = result.rows;
         res.json(applicant);
