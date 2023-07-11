@@ -14,6 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const pg_1 = require("pg");
+const environment_1 = require("./environment/environment");
+const password = environment_1.environment.pwd;
 const app = (0, express_1.default)();
 const port = 3001;
 //const query = "query.sql";
@@ -26,7 +28,7 @@ app.use((req, res, next) => {
 //PostGRE
 const pool = new pg_1.Pool({
     user: 'postgres',
-    password: 'Sumeetraj#1997',
+    password: password,
     host: 'localhost',
     database: 'PersonalInfo_db',
     port: 5432,

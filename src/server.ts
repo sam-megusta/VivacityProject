@@ -1,5 +1,8 @@
 import express, {Express, Request, Response} from 'express';
 import {Pool} from 'pg';
+import { environment } from './environment/environment';
+
+const password = environment.pwd;
 
 const app: Express = express();
 const port = 3001;
@@ -14,7 +17,7 @@ app.use((req, res, next) => {
   //PostGRE
   const pool = new Pool({
     user: 'postgres',
-    password: 'Sumeetraj#1997',
+    password: password,
     host: 'localhost',
     database: 'PersonalInfo_db',
     port: 5432,
