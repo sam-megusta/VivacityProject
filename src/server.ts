@@ -60,6 +60,45 @@ app.get('/awesome/applicant', async (req: Request, res: Response)=>{
     //res.send('Hello, this is Express + TypeScript');
 });
 
+app.use(express.json());
+//Post request to update db
+app.post('/awesome/applicant/update', async (req: Request, res: Response) => {
+    try {
+        const { credentials } = req.body;
+        const { details } = credentials;
+        const { Age, University, Expertise, Name, Course, Talents, "Fun Fact": FunFact, Hobbies } = details;
+    
+        const client = await pool.connect();
+        const query = `
+          UPDATE vivacity
+          SET "details" = CASE "credentials"
+            WHEN 'Age' THEN '${Age}'
+            WHEN 'University' THEN '${University}'
+            WHEN 'Expertise' THEN '${Expertise}'
+            WHEN 'Name' THEN '${Name}'
+            WHEN 'Course' THEN '${Course}'
+            WHEN 'Talents' THEN '${Talents}'
+            WHEN 'Fun Fact' THEN '${FunFact}'
+            WHEN 'Hobbies' THEN '${Hobbies}'
+            ELSE "details"
+          END
+          WHERE "credentials" IN ('Age', 'University', 'Expertise', 'Name', 'Course', 'Talents', 'Fun Fact', 'Hobbies');
+        `;
+    
+        await client.query(query);
+        client.release();
+        console.log(req.body);
+    
+
+    res.status(200).json({ message: 'Fields updated successfully' });
+    console.log("Fields updated succesfully");
+  } catch (error) {
+    console.error('Error updating fields:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+      
+
 app.listen(port, ()=> {
 console.log(`[Server]: I am running at https://localhost:${port}`);
 });
